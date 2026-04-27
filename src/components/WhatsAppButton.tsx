@@ -14,11 +14,10 @@ export default function WhatsAppButton() {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      className="fixed bottom-8 left-8 z-[60] flex items-center justify-center"
+      className="fixed bottom-8 right-8 z-[100] flex items-center justify-center"
     >
       {/* Efecto de Pulso/Brillo */}
       <div className="absolute inset-0 bg-green-500 rounded-full blur-xl opacity-20 animate-pulse" />
@@ -27,7 +26,7 @@ export default function WhatsAppButton() {
         <MessageCircle size={28} fill="currentColor" />
         
         {/* Tooltip */}
-        <span className="absolute left-16 bg-black border border-gray-800 text-white text-[10px] font-bold px-4 py-2 rounded-none whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-widest font-orbitron">
+        <span className="absolute right-16 bg-black border border-gray-800 text-white text-[10px] font-bold px-4 py-2 rounded-none whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-widest font-orbitron">
           Soporte Tech en Vivo
         </span>
       </div>
