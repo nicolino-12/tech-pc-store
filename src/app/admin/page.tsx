@@ -4,6 +4,16 @@ export default function AdminPage({ searchParams }: { searchParams: { success?: 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-2xl justify-center mx-auto min-h-screen pt-20 pb-20">
       <h1 className="text-3xl font-orbitron font-bold text-center mb-2 text-primary">PANEL DE CONTROL</h1>
+      
+      <div className="flex justify-center gap-4 mb-8">
+        <a href="/admin" className="text-sm font-bold pb-2 border-b-2 border-primary text-primary">
+          AGREGAR PRODUCTO
+        </a>
+        <a href="/admin/orders" className="text-sm font-bold pb-2 border-b-2 border-transparent text-gray-500 hover:text-white transition-colors">
+          VER PEDIDOS
+        </a>
+      </div>
+
       <p className="text-gray-400 text-center mb-8">Agrega nuevos componentes al catálogo de la tienda</p>
       
       <form action={addProduct} className="flex-1 flex flex-col w-full gap-4 text-foreground bg-black/50 p-8 border border-gray-800 shadow-2xl shadow-primary/5">
