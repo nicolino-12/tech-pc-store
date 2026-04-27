@@ -51,6 +51,18 @@ export default async function OrdersPage() {
         <p className="text-gray-400">Gestiona las compras realizadas en la tienda</p>
       </div>
 
+      <div className="flex gap-6 mb-8 border-b border-gray-800">
+        <a href="/admin" className="text-[10px] font-bold pb-4 border-b-2 border-transparent text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
+          PRODUCTOS
+        </a>
+        <a href="/admin/orders" className="text-[10px] font-bold pb-4 border-b-2 border-primary text-primary uppercase tracking-widest">
+          PEDIDOS
+        </a>
+        <a href="/admin/analytics" className="text-[10px] font-bold pb-4 border-b-2 border-transparent text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
+          ESTADÍSTICAS
+        </a>
+      </div>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-black/40 border border-gray-800 p-6 flex items-center gap-4">

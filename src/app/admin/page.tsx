@@ -27,12 +27,15 @@ export default async function AdminPage({ searchParams }: { searchParams: { succ
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-2xl justify-center mx-auto min-h-screen pt-20 pb-20">
       <h1 className="text-3xl font-orbitron font-bold text-center mb-2 text-primary">PANEL DE CONTROL</h1>
       
-      <div className="flex justify-center gap-4 mb-8">
-        <a href="/admin" className="text-sm font-bold pb-2 border-b-2 border-primary text-primary">
-          AGREGAR PRODUCTO
+      <div className="flex justify-center gap-6 mb-8 border-b border-gray-800">
+        <a href="/admin" className="text-[10px] font-bold pb-4 border-b-2 border-primary text-primary uppercase tracking-widest">
+          PRODUCTOS
         </a>
-        <a href="/admin/orders" className="text-sm font-bold pb-2 border-b-2 border-transparent text-gray-500 hover:text-white transition-colors">
-          VER PEDIDOS
+        <a href="/admin/orders" className="text-[10px] font-bold pb-4 border-b-2 border-transparent text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
+          PEDIDOS
+        </a>
+        <a href="/admin/analytics" className="text-[10px] font-bold pb-4 border-b-2 border-transparent text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
+          ESTADÍSTICAS
         </a>
       </div>
 
@@ -77,6 +80,17 @@ export default async function AdminPage({ searchParams }: { searchParams: { succ
               <option value="Memorias">Memorias RAM</option>
               <option value="Monitores">Monitores</option>
             </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-bold text-gray-300 block mb-2">Marca</label>
+            <input className="w-full rounded-none px-4 py-3 bg-secondary/30 border border-gray-700 focus:border-primary focus:outline-none transition-colors" name="brand" required placeholder="Ej. ASUS, NVIDIA, INTEL" />
+          </div>
+          <div>
+            <label className="text-sm font-bold text-gray-300 block mb-2">Stock Inicial</label>
+            <input className="w-full rounded-none px-4 py-3 bg-secondary/30 border border-gray-700 focus:border-primary focus:outline-none transition-colors" name="stock" type="number" required placeholder="10" />
           </div>
         </div>
 

@@ -6,6 +6,7 @@ import { ShoppingCart, ArrowLeft, ShieldCheck, Truck, CreditCard } from 'lucide-
 import Navbar from '@/components/Navbar';
 import CheckoutForm, { CheckoutData } from '@/components/CheckoutForm';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 export default function CheckoutPage() {
   const { items, getCartTotal } = useCartStore();
@@ -16,6 +17,29 @@ export default function CheckoutPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const [couponCode, setCouponCode] = useState('');
+  const [discount, setDiscount] = useState(0);
+  const [couponError, setCouponError] = useState('');
+
+  const validateCoupon = async () => {
+    setCouponError('');
+    const supabase = createClient();
+    const { data: coupon } = await supabase
+      .from('coupons')
+      .select('*')
+      .eq('code', couponCode.toUpperCase())
+      .eq('active', true)
+      .single();
+
+    if (coupon) {
+      setDiscount(coupon.discount_percent);
+      alert(`¡Cupón aplicado! Descuento del ${coupon.discount_percent}%`);
+    } else {
+      setDiscount(0);
+      setCouponError('Cupón inválido o expirado');
+    }
+  };
 
   if (!isMounted) return null;
 
@@ -35,8 +59,9 @@ export default function CheckoutPage() {
   }
 
   const subtotal = getCartTotal();
+  const discountAmount = (subtotal * discount) / 100;
   const shippingCost = subtotal > 1000 ? 0 : 25;
-  const finalTotal = subtotal + shippingCost;
+  const finalTotal = subtotal - discountAmount + shippingCost;
 
   const handleCheckout = async (customerData: CheckoutData) => {
     setIsProcessing(true);
@@ -121,6 +146,14 @@ export default function CheckoutPage() {
                   <span>Subtotal</span>
                   <span className="font-orbitron">${subtotal.toFixed(2)}</span>
                 </div>
+                
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-500 text-sm">
+                    <span>Descuento ({discount}%)</span>
+                    <span className="font-orbitron">-${discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+
                 <div className="flex justify-between text-gray-400">
                   <span className="flex items-center gap-2">
                     <Truck size={14} /> Envío
@@ -129,6 +162,27 @@ export default function CheckoutPage() {
                     {shippingCost === 0 ? <span className="text-green-500">GRATIS</span> : `$${shippingCost.toFixed(2)}`}
                   </span>
                 </div>
+
+                {/* Cupón Input */}
+                <div className="pt-4 pb-2">
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      placeholder="CUPÓN" 
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      className="flex-1 bg-black/50 border border-gray-800 px-3 py-2 text-xs focus:border-primary outline-none uppercase"
+                    />
+                    <button 
+                      onClick={validateCoupon}
+                      className="bg-secondary px-4 py-2 text-[10px] font-bold border border-gray-700 hover:border-primary transition-colors"
+                    >
+                      APLICAR
+                    </button>
+                  </div>
+                  {couponError && <p className="text-[10px] text-red-500 mt-1 uppercase font-bold">{couponError}</p>}
+                </div>
+
                 <div className="flex justify-between text-xl font-bold pt-4 border-t border-gray-800">
                   <span className="font-orbitron tracking-tighter">TOTAL</span>
                   <span className="text-primary font-orbitron">${finalTotal.toFixed(2)}</span>

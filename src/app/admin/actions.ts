@@ -13,9 +13,11 @@ export async function addProduct(formData: FormData) {
   const price = parseFloat(formData.get('price') as string)
   const image = formData.get('image') as string
   const category = formData.get('category') as string
+  const brand = formData.get('brand') as string || 'Generic'
+  const stock = parseInt(formData.get('stock') as string) || 0
 
   const { error } = await supabase.from('products').insert([
-    { name, description, price, image, category }
+    { name, description, price, image, category, brand, stock }
   ])
 
   if (error) {
