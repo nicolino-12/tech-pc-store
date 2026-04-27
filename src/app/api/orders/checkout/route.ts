@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   try {
-    const { items } = await req.json();
+    const { items, customerDetails } = await req.json();
     
     // Obtener la URL actual (para saber si estamos en localhost:3000 o 3001)
     const origin = req.headers.get('origin') || 'http://localhost:3001';
@@ -41,8 +41,16 @@ export async function POST(req: Request) {
       payment_method_types: ['card'],
       line_items,
       mode: 'payment',
+      customer_email: customerDetails?.email, // Pre-llenar el email si se proporcionó
       shipping_address_collection: {
-        allowed_countries: ['US', 'CA', 'ES', 'MX', 'AR', 'CL'], // Agregué varios países, puedes ajustarlos
+        allowed_countries: ['US', 'CA', 'ES', 'MX', 'AR', 'CL'],
+      },
+      // Metadatos para rastrear el pedido en el dashboard de Stripe
+      metadata: {
+        customerName: customerDetails?.name || 'Cliente sin nombre',
+        customerPhone: customerDetails?.phone || '',
+        customerAddress: customerDetails?.address || '',
+        customerCity: customerDetails?.city || '',
       },
       shipping_options: [
         {
