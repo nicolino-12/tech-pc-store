@@ -40,13 +40,22 @@ export default async function Home() {
           Arma tu setup definitivo con los componentes más avanzados del mercado. 
           Rendimiento extremo para creadores y jugadores exigentes.
         </p>
-        <a 
-          href="#catalogo"
-          className="bg-primary text-black font-bold text-lg px-8 py-4 rounded-none border border-primary hover:bg-transparent hover:text-primary transition-all flex items-center gap-2 group"
-        >
-          EXPLORAR CATÁLOGO
-          <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-        </a>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <a 
+            href="#catalogo"
+            className="bg-primary text-black font-bold text-lg px-8 py-4 rounded-none border border-primary hover:bg-transparent hover:text-primary transition-all flex items-center gap-2 group"
+          >
+            EXPLORAR CATÁLOGO
+            <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+          </a>
+          <a 
+            href="/arma-tu-pc"
+            className="bg-transparent text-white font-bold text-lg px-8 py-4 rounded-none border border-gray-700 hover:border-primary hover:text-primary transition-all flex items-center gap-2 group"
+          >
+            ARMA TU PC
+            <Cpu className="group-hover:rotate-12 transition-transform" />
+          </a>
+        </div>
       </section>
 
       {/* Features */}

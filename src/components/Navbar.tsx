@@ -98,6 +98,7 @@ export default function Navbar() {
 
       <div className="flex items-center gap-8">
         <Link href="/" className="hover:text-primary transition-colors hidden md:block">Catálogo</Link>
+        <Link href="/arma-tu-pc" className="text-primary hover:text-white transition-colors hidden md:block font-bold">Arma tu PC</Link>
         <Link href="#" className="hover:text-primary transition-colors hidden md:block">Ofertas</Link>
         <div className="w-px h-6 bg-gray-800 mx-2 hidden md:block"></div>
         <Cart />
