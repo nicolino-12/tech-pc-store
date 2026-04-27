@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const orbitron = Orbitron({ subsets: ["latin"], variable: '--font-orbitron' });
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${inter.variable} ${orbitron.variable} font-sans bg-black text-white antialiased`}>
         {children}
+        <WhatsAppButton />
       </body>
     </html>
   );
