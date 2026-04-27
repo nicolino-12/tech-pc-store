@@ -24,3 +24,18 @@ export async function addProduct(formData: FormData) {
   revalidatePath('/')
   redirect('/admin?success=1')
 }
+
+export async function updateOrderStatus(orderId: string, status: string) {
+  const supabase = createClient()
+  
+  const { error } = await supabase
+    .from('orders')
+    .update({ status })
+    .eq('id', orderId)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/admin/orders')
+}

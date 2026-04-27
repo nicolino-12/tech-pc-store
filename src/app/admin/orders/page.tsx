@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
-import { Package, User, MapPin, Calendar, CreditCard, ExternalLink } from 'lucide-react';
+import { Package, User, MapPin, Calendar, CreditCard, ExternalLink, TrendingUp, DollarSign, ShoppingBag } from 'lucide-react';
+import StatusSelector from './StatusSelector';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,16 +21,56 @@ export default async function OrdersPage() {
     );
   }
 
+  // Cálculos de estadísticas
+  const totalRevenue = orders?.reduce((acc, order) => 
+    order.status !== 'cancelled' ? acc + Number(order.total_amount) : acc, 0) || 0;
+  const pendingOrders = orders?.filter(o => o.status === 'pending').length || 0;
+  const paidOrders = orders?.filter(o => o.status === 'paid').length || 0;
+
   return (
     <div className="flex-1 flex flex-col w-full px-4 md:px-8 max-w-7xl mx-auto min-h-screen pt-24 pb-20">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-orbitron font-bold text-primary">PEDIDOS RECIBIDOS</h1>
-          <p className="text-gray-400">Gestiona las compras realizadas en la tienda</p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-orbitron font-bold text-primary">PEDIDOS RECIBIDOS</h1>
+        <p className="text-gray-400">Gestiona las compras realizadas en la tienda</p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="bg-black/40 border border-gray-800 p-6 flex items-center gap-4">
+          <div className="w-12 h-12 bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+            <DollarSign size={24} />
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Ingresos Totales</p>
+            <p className="text-2xl font-orbitron font-bold">${totalRevenue.toFixed(2)}</p>
+          </div>
         </div>
-        <div className="bg-black/50 border border-gray-800 p-4 rounded-none">
-          <span className="text-gray-500 text-sm block">Total de Pedidos</span>
-          <span className="text-2xl font-orbitron font-bold text-white">{orders?.length || 0}</span>
+        <div className="bg-black/40 border border-gray-800 p-6 flex items-center gap-4">
+          <div className="w-12 h-12 bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
+            <TrendingUp size={24} />
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Pendientes</p>
+            <p className="text-2xl font-orbitron font-bold">{pendingOrders}</p>
+          </div>
+        </div>
+        <div className="bg-black/40 border border-gray-800 p-6 flex items-center gap-4">
+          <div className="w-12 h-12 bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/20">
+            <ShoppingBag size={24} />
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Pagados</p>
+            <p className="text-2xl font-orbitron font-bold">{paidOrders}</p>
+          </div>
+        </div>
+        <div className="bg-black/40 border border-gray-800 p-6 flex items-center gap-4">
+          <div className="w-12 h-12 bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
+            <Package size={24} />
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Total Pedidos</p>
+            <p className="text-2xl font-orbitron font-bold">{orders?.length || 0}</p>
+          </div>
         </div>
       </div>
 
@@ -99,11 +140,7 @@ export default async function OrdersPage() {
 
                 {/* Status & Total */}
                 <div className="lg:w-48 flex flex-col justify-between items-end">
-                  <div className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest border ${
-                    order.status === 'pending' ? 'bg-yellow-500/10 border-yellow-500 text-yellow-500' : 'bg-green-500/10 border-green-500 text-green-500'
-                  }`}>
-                    {order.status === 'pending' ? 'Pendiente de Pago' : 'Pagado'}
-                  </div>
+                  <StatusSelector orderId={order.id} currentStatus={order.status} />
                   
                   <div className="text-right mt-6">
                     <div className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Total del Pedido</div>
@@ -112,7 +149,7 @@ export default async function OrdersPage() {
 
                   {order.stripe_session_id && (
                     <a 
-                      href={`https://dashboard.stripe.com/payments`} // Simplificado, idealmente link directo
+                      href={`https://dashboard.stripe.com/payments`} 
                       target="_blank"
                       className="mt-4 text-[10px] text-gray-500 flex items-center gap-1 hover:text-white transition-colors"
                     >
