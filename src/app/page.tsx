@@ -1,6 +1,6 @@
 import { ArrowRight, Cpu, Shield, Zap } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import ProductCard from "@/components/ProductCard";
+import ProductGrid from "@/components/ProductGrid";
 import { Product } from "@/store/useCartStore";
 import { createClient } from "@/utils/supabase/server";
 import { Suspense } from "react";
@@ -31,18 +31,21 @@ export default async function Home() {
       {/* Hero Section */}
       <section className="mt-20 pt-32 pb-20 px-8 flex flex-col items-center text-center relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 blur-[120px] rounded-full -z-10" />
-        <h1 className="font-orbitron text-6xl md:text-8xl font-black mb-6 tracking-tighter">
-          EL FUTURO DEL <br />
-          <span className="text-gradient">GAMING</span>
+        <h1 className="font-orbitron text-6xl md:text-8xl font-black mb-6 tracking-tighter uppercase">
+          El Futuro del <br />
+          <span className="text-gradient">Gaming</span>
         </h1>
         <p className="text-gray-400 text-lg md:text-xl max-w-2xl mb-10">
           Arma tu setup definitivo con los componentes más avanzados del mercado. 
           Rendimiento extremo para creadores y jugadores exigentes.
         </p>
-        <button className="bg-primary text-black font-bold text-lg px-8 py-4 rounded-none border border-primary hover:bg-transparent hover:text-primary transition-all flex items-center gap-2 group">
+        <a 
+          href="#catalogo"
+          className="bg-primary text-black font-bold text-lg px-8 py-4 rounded-none border border-primary hover:bg-transparent hover:text-primary transition-all flex items-center gap-2 group"
+        >
           EXPLORAR CATÁLOGO
           <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-        </button>
+        </a>
       </section>
 
       {/* Features */}
@@ -65,14 +68,7 @@ export default async function Home() {
       </section>
 
       {/* Products Section */}
-      <section className="py-24 px-8 max-w-7xl mx-auto w-full">
-        <h2 className="font-orbitron text-4xl font-bold mb-12 text-center text-gradient">PRODUCTOS DESTACADOS</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
+      <ProductGrid products={products} />
 
       {/* Footer */}
       <footer className="border-t border-gray-800 py-12 px-8 mt-auto bg-black">

@@ -48,9 +48,21 @@ export default function AdminPage({ searchParams }: { searchParams: { success?: 
             <input className="w-full rounded-none px-4 py-3 bg-secondary/30 border border-gray-700 focus:border-primary focus:outline-none transition-colors" name="price" type="number" step="0.01" required placeholder="999.99" />
           </div>
           <div>
-            <label className="text-sm font-bold text-gray-300 block mb-2">URL de la Imagen</label>
-            <input className="w-full rounded-none px-4 py-3 bg-secondary/30 border border-gray-700 focus:border-primary focus:outline-none transition-colors" name="image" type="url" required placeholder="https://..." />
+            <label className="text-sm font-bold text-gray-300 block mb-2">Categoría</label>
+            <select className="w-full rounded-none px-4 py-3 bg-secondary/30 border border-gray-700 focus:border-primary focus:outline-none transition-colors appearance-none" name="category" required>
+              <option value="Procesadores">Procesadores</option>
+              <option value="Gráficas">Tarjetas Gráficas</option>
+              <option value="Periféricos">Periféricos</option>
+              <option value="Almacenamiento">Almacenamiento</option>
+              <option value="Memorias">Memorias RAM</option>
+              <option value="Monitores">Monitores</option>
+            </select>
           </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-bold text-gray-300 block mb-2">URL de la Imagen</label>
+          <input className="w-full rounded-none px-4 py-3 bg-secondary/30 border border-gray-700 focus:border-primary focus:outline-none transition-colors" name="image" type="url" required placeholder="https://..." />
         </div>
         
         <button type="submit" className="mt-6 bg-primary text-black font-bold py-4 px-4 rounded-none hover:bg-white transition-all tracking-wider">
