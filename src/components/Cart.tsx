@@ -111,7 +111,7 @@ export default function Cart() {
                 <span className="font-orbitron font-bold">${subtotal.toFixed(2)}</span>
               </div>
               <div className="flex items-center justify-between mb-6">
-                <span className="text-gray-400">Envío <span className="text-xs ml-1">(Gratis > $1000)</span></span>
+                <span className="text-gray-400">Envío <span className="text-xs ml-1">(Gratis {">"} $1000)</span></span>
                 <span className="font-orbitron text-sm">
                   {shippingCost === 0 ? <span className="text-green-500 font-bold tracking-widest">GRATIS</span> : `$${shippingCost.toFixed(2)}`}
                 </span>
