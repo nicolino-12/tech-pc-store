@@ -1,5 +1,7 @@
 import { addProduct } from './actions'
 
+export const dynamic = 'force-dynamic';
+
 export default function AdminPage({ searchParams }: { searchParams: { success?: string, error?: string } }) {
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-2xl justify-center mx-auto min-h-screen pt-20 pb-20">
