@@ -5,11 +5,30 @@ import Cart from './Cart';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { Search } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<{ full_name: string; role: string } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const supabase = createClient();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q) setSearchQuery(q);
+  }, [searchParams]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/?search=${encodeURIComponent(searchQuery.trim())}#catalogo`);
+    } else {
+      router.push('/');
+    }
+  };
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
@@ -50,9 +69,33 @@ export default function Navbar() {
 
   return (
     <nav className="w-full h-20 border-b border-gray-800 flex items-center justify-between px-8 bg-black/50 backdrop-blur-md fixed top-0 z-50">
-      <Link href="/" className="font-orbitron text-2xl font-bold tracking-wider text-primary">
+      <Link href="/" className="font-orbitron text-2xl font-bold tracking-wider text-primary shrink-0">
         TECH_PC
       </Link>
+
+      {/* Buscador */}
+      <div className="flex-1 max-w-md mx-8 hidden lg:block">
+        <form onSubmit={handleSearch} className="relative group">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar componentes..."
+            className="w-full bg-secondary/30 border border-gray-800 px-10 py-2 text-sm focus:border-primary focus:outline-none transition-all group-hover:border-gray-700"
+          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 group-focus-within:text-primary transition-colors" />
+          {searchQuery && (
+            <button 
+              type="button" 
+              onClick={() => { setSearchQuery(''); router.push('/'); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+            >
+              ×
+            </button>
+          )}
+        </form>
+      </div>
+
       <div className="flex items-center gap-8">
         <Link href="/" className="hover:text-primary transition-colors hidden md:block">Catálogo</Link>
         <Link href="#" className="hover:text-primary transition-colors hidden md:block">Ofertas</Link>

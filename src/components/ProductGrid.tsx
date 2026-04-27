@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
 import { Product } from "@/store/useCartStore";
+import { useSearchParams } from "next/navigation";
 
 interface ProductGridProps {
   products: (Product & { category?: string })[];
@@ -12,16 +13,29 @@ const CATEGORIES = ["Todos", "Procesadores", "Gráficas", "Periféricos", "Almac
 
 export default function ProductGrid({ products }: ProductGridProps) {
   const [activeCategory, setActiveCategory] = useState("Todos");
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('search')?.toLowerCase() || "";
 
-  const filteredProducts = activeCategory === "Todos" 
-    ? products 
-    : products.filter(p => p.category === activeCategory);
+  const filteredProducts = products.filter(p => {
+    const matchesCategory = activeCategory === "Todos" || p.category === activeCategory;
+    const matchesSearch = !searchQuery || 
+      p.name.toLowerCase().includes(searchQuery) || 
+      p.description?.toLowerCase().includes(searchQuery);
+    
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <section id="catalogo" className="py-24 px-8 max-w-7xl mx-auto w-full scroll-mt-20">
-      <h2 className="font-orbitron text-4xl font-bold mb-8 text-center text-gradient uppercase tracking-tighter">
+      <h2 className="font-orbitron text-4xl font-bold mb-4 text-center text-gradient uppercase tracking-tighter">
         Catálogo de Componentes
       </h2>
+
+      {searchQuery && (
+        <p className="text-center text-gray-500 mb-8 font-bold text-sm">
+          Resultados para: <span className="text-primary">"{searchQuery}"</span>
+        </p>
+      )}
 
       {/* Category Menu */}
       <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-16">
