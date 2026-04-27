@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { createClient } from '@/utils/supabase/server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia',
@@ -8,6 +9,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export async function POST(req: Request) {
   try {
     const { items, customerDetails } = await req.json();
+    const supabase = createClient();
     
     // Obtener la URL actual (para saber si estamos en localhost:3000 o 3001)
     const origin = req.headers.get('origin') || 'http://localhost:3001';
@@ -68,6 +70,26 @@ export async function POST(req: Request) {
       success_url: `${origin}/?success=true`,
       cancel_url: `${origin}/?canceled=true`,
     });
+
+    // Guardar el pedido en Supabase
+    const { error: dbError } = await supabase.from('orders').insert({
+      customer_name: customerDetails?.name,
+      customer_email: customerDetails?.email,
+      customer_phone: customerDetails?.phone,
+      shipping_address: customerDetails?.address,
+      city: customerDetails?.city,
+      postal_code: customerDetails?.postalCode,
+      country: customerDetails?.country,
+      items: items, // Se guarda como JSONB
+      total_amount: subtotal + (shippingCostCents / 100),
+      stripe_session_id: session.id,
+      status: 'pending'
+    });
+
+    if (dbError) {
+      console.error("Error guardando en base de datos:", dbError);
+      // Opcional: Podríamos decidir si fallar o continuar
+    }
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
