@@ -1,6 +1,7 @@
 import { ArrowRight, Cpu, Shield, Zap } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ProductGrid from "@/components/ProductGrid";
+import BrandCarousel from "@/components/BrandCarousel";
 import { Product } from "@/store/useCartStore";
 import { createClient } from "@/utils/supabase/server";
 import { Suspense } from "react";
@@ -66,6 +67,8 @@ export default async function Home() {
           <p className="text-gray-400">Soporte técnico especializado y garantía extendida en todos los productos.</p>
         </div>
       </section>
+
+      <BrandCarousel />
 
       {/* Products Section */}
       <ProductGrid products={products} />
