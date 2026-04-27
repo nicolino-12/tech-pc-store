@@ -109,6 +109,9 @@ export default function Navbar() {
                 PANEL ADMIN
               </Link>
             )}
+            <Link href="/orders" className="text-[10px] text-gray-400 border border-gray-800 px-3 py-1 hover:border-white hover:text-white transition-colors hidden sm:block font-bold tracking-widest">
+              MIS PEDIDOS
+            </Link>
             <div className="flex flex-col items-end hidden sm:flex">
               <span className="text-xs font-bold text-white uppercase">{profile?.full_name || user.email}</span>
               <span className="text-[10px] text-gray-500 uppercase">{profile?.role === 'admin' ? 'Administrador' : 'Cliente Elite'}</span>

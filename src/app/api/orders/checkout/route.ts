@@ -10,6 +10,9 @@ export async function POST(req: Request) {
   try {
     const { items, customerDetails } = await req.json();
     const supabase = createClient();
+
+    // Obtener el ID del usuario si está logueado
+    const { data: { user } } = await supabase.auth.getUser();
     
     // Obtener la URL actual (para saber si estamos en localhost:3000 o 3001)
     const origin = req.headers.get('origin') || 'http://localhost:3001';
@@ -83,7 +86,8 @@ export async function POST(req: Request) {
       items: items, // Se guarda como JSONB
       total_amount: subtotal + (shippingCostCents / 100),
       stripe_session_id: session.id,
-      status: 'pending'
+      status: 'pending',
+      user_id: user?.id || null // Vincular con el usuario si existe
     });
 
     if (dbError) {
