@@ -1,41 +1,22 @@
 "use client";
 
 import { useState } from 'react';
+import { ShoppingCart, X, Minus, Plus, Trash2 } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
-import { ShoppingCart, X, Minus, Plus, Trash2, ArrowLeft } from 'lucide-react';
-import CheckoutForm, { CheckoutData } from './CheckoutForm';
+import { useRouter } from 'next/navigation';
 
 export default function Cart() {
   const [isOpen, setIsOpen] = useState(false);
-  const [checkoutStep, setCheckoutStep] = useState<'cart' | 'form'>('cart');
-  const [isProcessing, setIsProcessing] = useState(false);
   const { items, removeItem, updateQuantity, getCartTotal } = useCartStore();
+  const router = useRouter();
   
   const subtotal = getCartTotal();
   const shippingCost = subtotal > 1000 ? 0 : 25;
   const finalTotal = subtotal + shippingCost;
 
-  const handleCheckout = async (customerData?: CheckoutData) => {
-    setIsProcessing(true);
-    try {
-      const response = await fetch('/api/orders/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          items,
-          customerDetails: customerData 
-        }),
-      });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Error in checkout:', error);
-      alert('Hubo un error al procesar el pago.');
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleGoToCheckout = () => {
+    setIsOpen(false);
+    router.push('/checkout');
   };
 
   return (
@@ -65,19 +46,9 @@ export default function Cart() {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-800">
-            <div className="flex items-center gap-2">
-              {checkoutStep === 'form' && (
-                <button 
-                  onClick={() => setCheckoutStep('cart')}
-                  className="mr-2 hover:text-primary transition-colors"
-                >
-                  <ArrowLeft size={20} />
-                </button>
-              )}
-              <h2 className="font-orbitron text-xl font-bold flex items-center gap-2">
-                <ShoppingCart className="text-primary" /> {checkoutStep === 'cart' ? 'MI CARRITO' : 'DATOS DE ENVÍO'}
-              </h2>
-            </div>
+            <h2 className="font-orbitron text-xl font-bold flex items-center gap-2">
+              <ShoppingCart className="text-primary" /> MI CARRITO
+            </h2>
             <button onClick={() => setIsOpen(false)} className="hover:text-primary transition-colors">
               <X />
             </button>
@@ -90,7 +61,7 @@ export default function Cart() {
                 <ShoppingCart size={48} className="mb-4 opacity-20" />
                 <p>Tu carrito está vacío</p>
               </div>
-            ) : checkoutStep === 'cart' ? (
+            ) : (
               items.map((item) => (
                 <div key={item.id} className="flex gap-4 border border-gray-800 p-3 bg-black/30">
                   <div className="w-24 h-24 bg-black border border-gray-800 flex items-center justify-center overflow-hidden shrink-0">
@@ -118,17 +89,11 @@ export default function Cart() {
                   </div>
                 </div>
               ))
-            ) : (
-              <CheckoutForm 
-                onSubmit={handleCheckout} 
-                onBack={() => setCheckoutStep('cart')}
-                isLoading={isProcessing}
-              />
             )}
           </div>
 
           {/* Footer */}
-          {items.length > 0 && checkoutStep === 'cart' && (
+          {items.length > 0 && (
             <div className="border-t border-gray-800 p-6 bg-black/50">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-400">Subtotal</span>
@@ -147,10 +112,10 @@ export default function Cart() {
                 </span>
               </div>
               <button 
-                onClick={() => setCheckoutStep('form')}
+                onClick={handleGoToCheckout}
                 className="w-full bg-primary text-black font-bold py-4 hover:bg-white transition-colors"
               >
-                INGRESAR DATOS DE ENVÍO
+                FINALIZAR COMPRA Y PAGAR
               </button>
             </div>
           )}
