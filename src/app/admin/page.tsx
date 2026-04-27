@@ -1,8 +1,28 @@
 import { addProduct } from './actions'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminPage({ searchParams }: { searchParams: { success?: string, error?: string } }) {
+export default async function AdminPage({ searchParams }: { searchParams: { success?: string, error?: string } }) {
+  const supabase = createClient()
+  
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    redirect('/login?message=Inicia sesión para acceder al panel')
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.role !== 'admin') {
+    redirect('/?message=No tienes permisos para acceder al panel de administración')
+  }
+
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-2xl justify-center mx-auto min-h-screen pt-20 pb-20">
       <h1 className="text-3xl font-orbitron font-bold text-center mb-2 text-primary">PANEL DE CONTROL</h1>
