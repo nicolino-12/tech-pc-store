@@ -79,19 +79,35 @@ export default function LoginPage({ searchParams }: { searchParams: { message: s
             </div>
           </div>
           
-          <div className="relative">
-            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Contraseña</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
-              <input
-                className="w-full rounded-none pl-10 pr-4 py-3 bg-black/50 border border-gray-700 focus:border-primary focus:outline-none transition-colors"
-                type="password"
-                name="password"
-                placeholder="••••••••"
-                required
-              />
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Contraseña</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
+                <input
+                  className="w-full rounded-none pl-10 pr-4 py-3 bg-black/50 border border-gray-700 focus:border-primary focus:outline-none transition-colors"
+                  type="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
             </div>
-          </div>
+
+            {view === 'signup' && (
+              <div className="relative">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Confirmar Contraseña</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 w-4 h-4" />
+                  <input
+                    className="w-full rounded-none pl-10 pr-4 py-3 bg-black/50 border border-gray-700 focus:border-primary focus:outline-none transition-colors"
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+              </div>
+            )}
           
           {view === 'login' ? (
             <button 

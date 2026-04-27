@@ -27,9 +27,15 @@ export async function signup(formData: FormData) {
   
   const email = data.email as string
   const password = data.password as string
+  const confirmPassword = data.confirmPassword as string
   const fullName = data.fullName as string
   const phone = data.phone as string
   const address = data.address as string
+
+  // Validar que las contraseñas coincidan
+  if (password !== confirmPassword) {
+    redirect('/login?message=' + encodeURIComponent('Las contraseñas no coinciden.'))
+  }
 
   // 1. Registrar usuario en Auth
   const { data: authData, error: authError } = await supabase.auth.signUp({
