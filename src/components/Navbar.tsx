@@ -115,8 +115,7 @@ export default function Navbar() {
             </Link>
             <div className="flex flex-col items-end hidden sm:flex">
               <span className="text-xs font-bold text-white uppercase">{profile?.full_name || user.email}</span>
-              <span className="text-[10px] text-primary font-black">ROL DETECTADO: {profile?.role || 'null'}</span>
-              <span className="text-[8px] text-gray-500 uppercase">{user.id}</span>
+              <span className="text-[10px] text-gray-500 uppercase">{profile?.role === 'admin' ? 'Administrador' : 'Cliente Elite'}</span>
             </div>
             <button 
               onClick={handleLogout}
