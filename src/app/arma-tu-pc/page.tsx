@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import Navbar from '@/components/Navbar';
-import { Cpu, Layout as MotherboardIcon, HardDrive, Monitor, MousePointer2, CheckCircle2, ChevronRight, ChevronLeft, ShoppingCart, Trash2, Zap, Info } from 'lucide-react';
+import { Cpu, Layout as MotherboardIcon, HardDrive, Monitor, MousePointer2, CheckCircle2, ChevronRight, ChevronLeft, ShoppingCart, Trash2, Zap, Info, ChevronUp, ChevronDown } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,7 +15,7 @@ const STEPS = [
   { id: 'Gráficas', name: 'Placa de Video', icon: Monitor },
   { id: 'Almacenamiento', name: 'Disco / SSD', icon: HardDrive },
   { id: 'Gabinetes', name: 'Gabinete', icon: Monitor },
-  { id: 'Fuentes', name: 'Fuente de Alimentación', icon: Zap },
+  { id: 'Fuentes', name: 'Fuente', icon: Zap },
 ];
 
 export const dynamic = 'force-dynamic';
@@ -26,6 +26,7 @@ export default function ArmaTuPC() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selections, setSelections] = useState<Record<string, { product: any, quantity: number }>>({});
+  const [showSummaryMobile, setShowSummaryMobile] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
   const supabase = createClient();
 
@@ -43,37 +44,27 @@ export default function ArmaTuPC() {
   if (!isMounted) return null;
 
   const currentCategory = STEPS[currentStep].id;
-  
-  // Lógica de Compatibilidad
   const selectedCPU = selections['Procesadores']?.product;
   const selectedMother = selections['Motherboards']?.product;
 
   const filteredProducts = products.filter(p => {
-    // 1. Filtrar por categoría base
     if (currentCategory === 'Motherboards') {
       if (!(p.category === 'Motherboards' || p.category === 'Memorias' && (p.name.toLowerCase().includes('mother') || p.name.toLowerCase().includes('placa base')))) return false;
     } else if (p.category !== currentCategory) return false;
-
-    // 2. Compatibilidad de Socket (CPU -> Mother)
     if (currentCategory === 'Motherboards' && selectedCPU?.socket) {
       if (p.socket && p.socket !== selectedCPU.socket) return false;
     }
-
-    // 3. Compatibilidad de RAM (Mother -> RAM)
     if (currentCategory === 'Memorias' && selectedMother?.ram_type) {
       if (p.ram_type && p.ram_type !== selectedMother.ram_type) return false;
     }
-
     return true;
   });
 
   const handleSelect = (product: any) => {
-    setSelections(prev => ({ 
-      ...prev, 
-      [currentCategory]: { product, quantity: 1 } 
-    }));
+    setSelections(prev => ({ ...prev, [currentCategory]: { product, quantity: 1 } }));
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -93,35 +84,32 @@ export default function ArmaTuPC() {
   };
 
   const totalList = Object.values(selections).reduce((acc, item) => acc + (Number(item.product.price) * item.quantity), 0);
-  const totalSpecial = totalList * 0.85; // 15% de descuento por transferencia
+  const totalSpecial = totalList * 0.85;
   const totalWatts = Object.values(selections).reduce((acc, item) => acc + (Number(item.product.wattage || 0) * item.quantity), 0);
 
   const addAllToCart = () => {
     Object.values(selections).forEach(item => {
-      for (let i = 0; i < item.quantity; i++) {
-        addItem(item.product);
-      }
+      for (let i = 0; i < item.quantity; i++) addItem(item.product);
     });
-    alert("¡Tu build personalizada ha sido añadida al carrito!");
+    alert("¡Tu build ha sido añadida al carrito!");
   };
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black text-white pb-32 lg:pb-0">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto pt-24 pb-20 px-4 md:px-8">
-        {/* Header Estilo Compra Gamer */}
-        <div className="bg-secondary/10 border-l-4 border-primary p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div>
-            <h1 className="text-3xl font-orbitron font-black text-white tracking-tighter italic">ARMADO DE PC GAMER</h1>
-            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">Sigue los pasos para configurar tu equipo de ensueño</p>
+      <div className="max-w-7xl mx-auto pt-20 md:pt-28 pb-10 px-4 md:px-8">
+        
+        {/* Header Adaptado */}
+        <div className="bg-secondary/10 border-l-4 border-primary p-4 md:p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-center md:text-left w-full">
+            <h1 className="text-xl md:text-3xl font-orbitron font-black tracking-tighter italic">ARMADOR DE PC</h1>
+            <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest mt-1">Configuración técnica guiada</p>
           </div>
-          <div className="flex gap-8 text-center">
+          <div className="hidden md:flex gap-8 text-center">
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase">Consumo Estimado</p>
-              <p className={`font-orbitron font-black text-xl ${totalWatts > 0 ? 'text-yellow-500' : 'text-gray-700'}`}>
-                {totalWatts} <span className="text-xs">WATT</span>
-              </p>
+              <p className="text-[10px] text-gray-500 font-bold uppercase">Consumo</p>
+              <p className="font-orbitron font-black text-xl text-yellow-500">{totalWatts}W</p>
             </div>
             <div className="w-px h-10 bg-gray-800"></div>
             <div>
@@ -133,10 +121,9 @@ export default function ArmaTuPC() {
 
         <div className="flex flex-col lg:flex-row gap-8">
           
-          {/* Lado Izquierdo: Pasos y Lista */}
           <div className="flex-1">
-            {/* Stepper Horizontal */}
-            <div className="flex overflow-x-auto pb-4 gap-2 no-scrollbar mb-8 border-b border-gray-900">
+            {/* Stepper Móvil (Horizontal Scroll) */}
+            <div className="flex overflow-x-auto pb-2 gap-2 no-scrollbar mb-6 border-b border-gray-900 sticky top-20 bg-black/80 backdrop-blur-sm z-30 py-2">
               {STEPS.map((step, index) => {
                 const Icon = step.icon;
                 const isSelected = selections[step.id];
@@ -146,148 +133,179 @@ export default function ArmaTuPC() {
                   <button
                     key={step.id}
                     onClick={() => setCurrentStep(index)}
-                    className={`shrink-0 flex items-center gap-3 p-3 transition-all border-b-2 ${
-                      isActive ? 'border-primary bg-primary/5' : 
-                      isSelected ? 'border-green-500/50 text-green-500' : 'border-transparent text-gray-600'
+                    className={`shrink-0 flex items-center gap-2 p-2 px-4 rounded-full transition-all text-[9px] font-black uppercase ${
+                      isActive ? 'bg-primary text-black' : 
+                      isSelected ? 'bg-green-500/20 text-green-500 border border-green-500/30' : 'bg-secondary/20 text-gray-500'
                     }`}
                   >
-                    <Icon size={18} />
-                    <span className="text-[10px] font-black uppercase tracking-tighter whitespace-nowrap">
-                      {index + 1}. {step.name}
-                    </span>
+                    <Icon size={12} />
+                    <span className="whitespace-nowrap">{step.name}</span>
                   </button>
                 );
               })}
             </div>
 
-            {/* Advertencias de Compatibilidad */}
-            <AnimatePresence>
-              {currentCategory === 'Motherboards' && selectedCPU && (
-                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold flex items-center gap-3">
-                  <Info size={16} /> FILTRANDO PLACAS PARA SOCKET: {selectedCPU.socket || 'DESCONOCIDO'}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Alerta compatibilidad móvil */}
+            {currentCategory === 'Motherboards' && selectedCPU && (
+              <div className="mb-4 p-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[8px] font-bold flex items-center gap-2 uppercase tracking-widest">
+                <Info size={12} /> Socket: {selectedCPU.socket}
+              </div>
+            )}
 
-            {/* Listado */}
+            {/* Listado de Productos Optimizado */}
             <div className="grid grid-cols-1 gap-3">
               {loading ? (
-                <div className="py-20 text-center animate-pulse text-gray-500 font-orbitron text-xs">ANALIZANDO COMPONENTE...</div>
+                <div className="py-20 text-center animate-pulse text-gray-500 font-orbitron text-[10px]">PROCESANDO...</div>
               ) : filteredProducts.length === 0 ? (
                 <div className="py-20 text-center border border-dashed border-gray-800 rounded-lg">
-                  <p className="text-gray-600 font-bold text-sm mb-2">No se encontraron productos compatibles.</p>
-                  <button onClick={() => setCurrentStep(0)} className="text-primary text-[10px] font-black underline">REINICIAR ARMADO</button>
+                  <p className="text-gray-600 text-xs mb-4">Sin stock compatible.</p>
+                  <button onClick={() => setCurrentStep(0)} className="bg-primary/10 text-primary px-6 py-2 text-[10px] font-black">VOLVER AL INICIO</button>
                 </div>
               ) : (
                 filteredProducts.map((product) => (
                   <div 
                     key={product.id}
-                    className={`group p-4 border transition-all flex flex-col md:flex-row gap-6 items-center ${
-                      selections[currentCategory]?.product.id === product.id ? 'border-primary bg-primary/5' : 'border-gray-800 hover:border-gray-700 bg-secondary/5'
+                    className={`p-4 border transition-all flex gap-4 ${
+                      selections[currentCategory]?.product.id === product.id ? 'border-primary bg-primary/5' : 'border-gray-900 bg-secondary/5'
                     }`}
                   >
-                    <img src={product.image} alt={product.name} className="w-24 h-24 object-contain bg-black rounded p-2" />
-                    <div className="flex-1 text-center md:text-left">
-                      <div className="flex items-center gap-2 mb-1 justify-center md:justify-start">
-                        <span className="text-[9px] bg-gray-800 text-gray-400 px-2 py-0.5 font-bold">{product.brand}</span>
-                        {product.socket && <span className="text-[9px] bg-blue-900/50 text-blue-300 px-2 py-0.5 font-bold uppercase">{product.socket}</span>}
-                        {product.ram_type && <span className="text-[9px] bg-purple-900/50 text-purple-300 px-2 py-0.5 font-bold uppercase">{product.ram_type}</span>}
+                    <img src={product.image} alt={product.name} className="w-20 h-20 md:w-24 md:h-24 object-contain bg-black rounded" />
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <p className="text-[8px] text-gray-500 font-bold uppercase mb-1">{product.brand}</p>
+                        <h4 className="font-bold text-xs md:text-sm leading-tight mb-2 line-clamp-2">{product.name}</h4>
                       </div>
-                      <h4 className="font-bold text-base leading-tight mb-2">{product.name}</h4>
-                      <div className="flex items-center gap-4 justify-center md:justify-start">
-                        <div className="text-xs text-gray-500 line-through">${product.price.toLocaleString()}</div>
-                        <div className="text-primary font-orbitron text-xl font-black">${(product.price * 0.85).toLocaleString()}</div>
-                        <div className="text-[9px] text-primary font-bold uppercase italic">Precio Especial</div>
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <p className="text-[10px] md:text-lg font-orbitron font-black text-primary">${(product.price * 0.85).toLocaleString()}</p>
+                        </div>
+                        <button 
+                          onClick={() => handleSelect(product)}
+                          className={`px-4 py-2 text-[9px] font-black uppercase transition-all ${
+                            selections[currentCategory]?.product.id === product.id 
+                            ? 'bg-green-500 text-black' 
+                            : 'bg-white text-black'
+                          }`}
+                        >
+                          {selections[currentCategory]?.product.id === product.id ? 'OK' : 'Elegir'}
+                        </button>
                       </div>
                     </div>
-                    
-                    <button 
-                      onClick={() => handleSelect(product)}
-                      className={`w-full md:w-auto px-10 py-3 text-[11px] font-black tracking-widest transition-all ${
-                        selections[currentCategory]?.product.id === product.id 
-                        ? 'bg-green-500 text-black' 
-                        : 'bg-white text-black hover:bg-primary'
-                      }`}
-                    >
-                      {selections[currentCategory]?.product.id === product.id ? 'SELECCIONADO' : 'ELEGIR'}
-                    </button>
                   </div>
                 ))
               )}
             </div>
+
+            {/* Navegación inferior */}
+            <div className="flex justify-between mt-8 md:hidden">
+              <button onClick={() => setCurrentStep(Math.max(0, currentStep - 1))} className="text-[9px] font-bold text-gray-500 uppercase flex items-center gap-1">
+                <ChevronLeft size={14} /> Atrás
+              </button>
+              <button onClick={() => setCurrentStep(Math.min(STEPS.length - 1, currentStep + 1))} className="text-[9px] font-bold text-primary uppercase flex items-center gap-1">
+                Siguiente <ChevronRight size={14} />
+              </button>
+            </div>
           </div>
 
-          {/* Lado Derecho: Resumen Build */}
-          <div className="lg:w-96">
-            <div className="bg-secondary/10 border border-gray-800 rounded-lg p-6 sticky top-24">
-              <h3 className="font-orbitron font-black text-base mb-6 tracking-tighter border-b border-gray-800 pb-3 flex items-center justify-between">
-                RESUMEN DE COMPRA
-                <span className="text-[10px] text-gray-600">PASO {currentStep + 1}/8</span>
-              </h3>
-              
-              <div className="space-y-4 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+          {/* Resumen Desktop */}
+          <div className="hidden lg:block w-96">
+            <div className="bg-secondary/10 border border-gray-800 rounded-lg p-6 sticky top-32">
+              <h3 className="font-orbitron font-black text-base mb-6 tracking-tighter border-b border-gray-800 pb-3 italic">RESUMEN</h3>
+              <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {STEPS.map((step) => {
                   const selection = selections[step.id];
                   return (
-                    <div key={step.id} className={`p-3 border transition-colors ${selection ? 'border-gray-700 bg-black/40' : 'border-gray-800/30'}`}>
-                      <div className="flex justify-between items-start mb-1">
-                        <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">{step.name}</p>
-                        {selection && (
-                          <button onClick={() => removeSelection(step.id)} className="text-gray-700 hover:text-red-500">
-                            <Trash2 size={12} />
-                          </button>
-                        )}
-                      </div>
-                      
+                    <div key={step.id} className={`p-3 border ${selection ? 'border-gray-700 bg-black/40' : 'border-gray-800/20'}`}>
+                      <p className="text-[8px] text-gray-500 font-bold uppercase mb-1">{step.name}</p>
                       {selection ? (
                         <div>
-                          <p className="text-[11px] font-bold text-gray-200 mb-2 line-clamp-2">{selection.product.name}</p>
+                          <p className="text-[10px] font-bold text-gray-300 leading-tight mb-2">{selection.product.name}</p>
                           <div className="flex justify-between items-center">
                             <div className="flex items-center gap-2 bg-gray-900 rounded px-2">
-                              <button onClick={() => updateQuantity(step.id, -1)} className="text-primary font-bold text-lg">-</button>
-                              <span className="text-[10px] font-bold w-4 text-center">{selection.quantity}</span>
-                              <button onClick={() => updateQuantity(step.id, 1)} className="text-primary font-bold text-lg">+</button>
+                              <button onClick={() => updateQuantity(step.id, -1)} className="text-primary font-bold">-</button>
+                              <span className="text-[10px] font-bold">{selection.quantity}</span>
+                              <button onClick={() => updateQuantity(step.id, 1)} className="text-primary font-bold">+</button>
                             </div>
-                            <span className="text-xs font-orbitron text-primary">
-                              ${(selection.product.price * 0.85 * selection.quantity).toLocaleString()}
-                            </span>
+                            <span className="text-xs font-orbitron text-primary">${(selection.product.price * 0.85 * selection.quantity).toLocaleString()}</span>
                           </div>
                         </div>
                       ) : (
-                        <button onClick={() => setCurrentStep(STEPS.indexOf(step))} className="text-[10px] text-gray-700 hover:text-primary italic uppercase">Elegir componente...</button>
+                        <p className="text-[8px] text-gray-800 italic uppercase">Pendiente</p>
                       )}
                     </div>
                   );
                 })}
               </div>
-
-              <div className="bg-black p-4 border border-gray-800 rounded-lg mb-6">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] text-gray-500 font-bold uppercase">Precio de Lista</span>
-                  <span className="text-gray-400 font-orbitron text-sm">${totalList.toLocaleString()}</span>
+              <div className="border-t border-gray-800 pt-4 mb-6">
+                <div className="flex justify-between items-center mb-1 text-[10px] text-gray-500 uppercase font-bold">
+                  <span>Lista</span>
+                  <span>${totalList.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-[10px] text-primary font-bold uppercase italic">Precio Especial</span>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs text-primary font-bold uppercase italic">Especial</span>
                   <span className="text-primary font-orbitron font-black text-xl">${totalSpecial.toLocaleString()}</span>
                 </div>
-                <div className="flex items-center gap-2 text-[9px] text-gray-500 font-bold uppercase justify-center">
-                  <Zap size={12} className="text-yellow-500" /> 
-                  Consumo Estimado: <span className="text-white">{totalWatts}W</span>
-                </div>
               </div>
-
-              <button 
-                onClick={addAllToCart}
-                disabled={Object.keys(selections).length === 0}
-                className="w-full bg-primary text-black font-black py-4 flex items-center justify-center gap-3 hover:bg-white transition-all disabled:opacity-50 disabled:grayscale uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(0,240,255,0.2)]"
-              >
-                COMPRAR AHORA
-              </button>
+              <button onClick={addAllToCart} disabled={Object.keys(selections).length === 0} className="w-full bg-primary text-black font-black py-4 text-xs uppercase tracking-widest hover:bg-white transition-all disabled:opacity-50">COMPRAR AHORA</button>
             </div>
           </div>
 
         </div>
       </div>
+
+      {/* FOOTER MÓVIL (Solo visible en pantallas pequeñas) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-black border-t border-gray-800 p-4 shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
+        <div className="flex justify-between items-center mb-2">
+          <button onClick={() => setShowSummaryMobile(!showSummaryMobile)} className="text-[10px] font-black text-primary uppercase flex items-center gap-1">
+            {showSummaryMobile ? <ChevronDown size={14} /> : <ChevronUp size={14} />} 
+            Ver Configuración ({Object.keys(selections).length})
+          </button>
+          <div className="text-right">
+            <p className="text-[8px] text-gray-500 font-bold uppercase italic">Especial</p>
+            <p className="text-primary font-orbitron font-black text-lg">${totalSpecial.toLocaleString()}</p>
+          </div>
+        </div>
+        <button onClick={addAllToCart} disabled={Object.keys(selections).length === 0} className="w-full bg-primary text-black font-black py-3 text-[10px] uppercase tracking-widest disabled:opacity-50">
+          COMPRAR AHORA
+        </button>
+      </div>
+
+      {/* Drawer Móvil para Resumen */}
+      <AnimatePresence>
+        {showSummaryMobile && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowSummaryMobile(false)} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] lg:hidden" />
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: 'spring', damping: 25 }} className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a] border-t border-primary/30 z-[80] p-6 max-h-[80vh] overflow-y-auto rounded-t-3xl lg:hidden">
+              <div className="w-12 h-1.5 bg-gray-800 rounded-full mx-auto mb-6" />
+              <h3 className="font-orbitron font-black text-center mb-6 text-primary tracking-widest italic">TU CONFIGURACIÓN</h3>
+              <div className="space-y-4">
+                {STEPS.map((step) => {
+                  const selection = selections[step.id];
+                  return (
+                    <div key={step.id} className="flex justify-between items-start border-b border-gray-900 pb-4">
+                      <div className="flex-1">
+                        <p className="text-[8px] text-gray-500 font-bold uppercase mb-1">{step.name}</p>
+                        {selection ? (
+                          <p className="text-[11px] font-bold text-white pr-4">{selection.product.name}</p>
+                        ) : (
+                          <p className="text-[10px] text-gray-800 italic">No seleccionado</p>
+                        )}
+                      </div>
+                      {selection && (
+                        <div className="flex flex-col items-end gap-2">
+                          <span className="text-[11px] font-orbitron text-primary">${(selection.product.price * 0.85 * selection.quantity).toLocaleString()}</span>
+                          <button onClick={() => removeSelection(step.id)} className="text-red-500"><Trash2 size={14} /></button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <button onClick={() => setShowSummaryMobile(false)} className="w-full mt-8 py-4 bg-secondary/50 text-white font-bold text-xs uppercase tracking-widest border border-gray-800">CERRAR</button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
