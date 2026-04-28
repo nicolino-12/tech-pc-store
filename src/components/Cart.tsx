@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { ShoppingCart, X, Minus, Plus, Trash2 } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
+import { useToastStore } from '@/store/useToastStore';
 import { useRouter } from 'next/navigation';
 
 export default function Cart() {
   const [isOpen, setIsOpen] = useState(false);
-  const { items, removeItem, updateQuantity, getCartTotal } = useCartStore();
+  const { items, removeItem, updateQuantity, getCartTotal, clearCart } = useCartStore();
+  const addToast = useToastStore(state => state.addToast);
   const router = useRouter();
   
   const subtotal = getCartTotal();
@@ -15,6 +17,13 @@ export default function Cart() {
   const shippingCost = subtotal > 1000 ? 0 : 25;
   const finalTotal = subtotal + shippingCost;
   const savings = subtotal - specialTotal;
+
+  const handleClearCart = () => {
+    if (confirm("¿Estás seguro de que quieres vaciar todo el carrito?")) {
+      clearCart();
+      addToast("CARRITO VACIADO", "info");
+    }
+  };
 
   const handleGoToCheckout = () => {
     setIsOpen(false);
@@ -58,6 +67,17 @@ export default function Cart() {
 
           {/* Items */}
           <div className="flex-1 overflow-y-auto p-8 flex flex-col gap-6 custom-scrollbar">
+            {items.length > 0 && (
+              <div className="flex justify-end">
+                <button 
+                  onClick={handleClearCart}
+                  className="text-[9px] font-black text-gray-600 hover:text-red-500 transition-colors flex items-center gap-2 uppercase tracking-widest"
+                >
+                  <Trash2 size={12} /> Vaciar Carrito
+                </button>
+              </div>
+            )}
+            
             {items.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-700">
                 <ShoppingCart size={64} className="mb-6 opacity-10" />
