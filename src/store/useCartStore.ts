@@ -20,6 +20,7 @@ interface CartStore {
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   getCartTotal: () => number;
+  getSpecialTotal: () => number;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -64,6 +65,9 @@ export const useCartStore = create<CartStore>()(
           (total, item) => total + item.price * item.quantity,
           0
         );
+      },
+      getSpecialTotal: () => {
+        return get().getCartTotal() * 0.85;
       },
     }),
     {

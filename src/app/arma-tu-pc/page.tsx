@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import Navbar from '@/components/Navbar';
-import { Cpu, Layout as MotherboardIcon, HardDrive, Monitor, MousePointer2, CheckCircle2, ChevronRight, ChevronLeft, ShoppingCart, Trash2, Zap, Info, ChevronUp, ChevronDown } from 'lucide-react';
+import { Cpu, Layout as MotherboardIcon, HardDrive, Monitor, MousePointer2, CheckCircle2, ChevronRight, ChevronLeft, ShoppingCart, Trash2, Zap, Info, ChevronUp, ChevronDown, Download } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
+import { useToastStore } from '@/store/useToastStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { jsPDF } from "jspdf";
 
 const STEPS = [
   { id: 'Procesadores', name: 'Procesador', icon: Cpu },
@@ -28,6 +30,7 @@ export default function ArmaTuPC() {
   const [selections, setSelections] = useState<Record<string, { product: any, quantity: number }>>({});
   const [showSummaryMobile, setShowSummaryMobile] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
+  const addToast = useToastStore((state) => state.addToast);
   const supabase = createClient();
 
   useEffect(() => {
@@ -66,6 +69,7 @@ export default function ArmaTuPC() {
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    addToast(`${product.name.substring(0, 20)}... SELECCIONADO`, 'success');
   };
 
   const updateQuantity = (categoryId: string, delta: number) => {
@@ -81,17 +85,65 @@ export default function ArmaTuPC() {
     const newSelections = { ...selections };
     delete newSelections[categoryId];
     setSelections(newSelections);
+    addToast("COMPONENTE ELIMINADO", 'info');
   };
 
   const totalList = Object.values(selections).reduce((acc, item) => acc + (Number(item.product.price) * item.quantity), 0);
   const totalSpecial = totalList * 0.85;
   const totalWatts = Object.values(selections).reduce((acc, item) => acc + (Number(item.product.wattage || 0) * item.quantity), 0);
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    
+    // Header
+    doc.setFillColor(0, 0, 0);
+    doc.rect(0, 0, 210, 40, 'F');
+    doc.setTextColor(0, 240, 255);
+    doc.setFontSize(22);
+    doc.text("TECH PC STORE", 20, 25);
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text("PRESUPUESTO DE ARMADO ELITE", 20, 32);
+    
+    // Details
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 50);
+    doc.text(`Consumo Estimado: ${totalWatts}W`, 140, 50);
+    
+    doc.line(20, 55, 190, 55);
+    
+    let y = 65;
+    STEPS.forEach((step) => {
+      const item = selections[step.id];
+      if (item) {
+        doc.setFont("helvetica", "bold");
+        doc.text(step.name.toUpperCase(), 20, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(item.product.name.substring(0, 70), 20, y + 5);
+        doc.text(`$${item.product.price.toLocaleString()}`, 170, y + 5, { align: 'right' });
+        y += 15;
+      }
+    });
+    
+    doc.line(20, y, 190, y);
+    y += 10;
+    
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("TOTAL (PRECIO ESPECIAL):", 20, y);
+    doc.setTextColor(0, 150, 150);
+    doc.text(`$${totalSpecial.toLocaleString()}`, 190, y, { align: 'right' });
+    
+    doc.save(`Presupuesto_TechPC_${Date.now()}.pdf`);
+    addToast("PDF GENERADO CON ÉXITO", 'success');
+  };
+
   const addAllToCart = () => {
     Object.values(selections).forEach(item => {
       for (let i = 0; i < item.quantity; i++) addItem(item.product);
     });
-    alert("¡Tu build ha sido añadida al carrito!");
+    addToast("¡TU BUILD HA SIDO AÑADIDA AL CARRITO!", 'success');
   };
 
   return (
@@ -246,7 +298,13 @@ export default function ArmaTuPC() {
                   <span className="text-primary font-orbitron font-black text-xl">${totalSpecial.toLocaleString()}</span>
                 </div>
               </div>
-              <button onClick={addAllToCart} disabled={Object.keys(selections).length === 0} className="w-full bg-primary text-black font-black py-4 text-xs uppercase tracking-widest hover:bg-white transition-all disabled:opacity-50">COMPRAR AHORA</button>
+
+              <div className="flex flex-col gap-2">
+                <button onClick={addAllToCart} disabled={Object.keys(selections).length === 0} className="w-full bg-primary text-black font-black py-4 text-xs uppercase tracking-widest hover:bg-white transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(0,240,255,0.2)]">COMPRAR AHORA</button>
+                <button onClick={generatePDF} disabled={Object.keys(selections).length === 0} className="w-full bg-transparent border border-gray-700 text-gray-400 font-bold py-3 text-[10px] uppercase tracking-widest hover:border-white hover:text-white transition-all flex items-center justify-center gap-2">
+                  <Download size={14} /> Descargar Presupuesto
+                </button>
+              </div>
             </div>
           </div>
 
@@ -301,7 +359,14 @@ export default function ArmaTuPC() {
                   );
                 })}
               </div>
-              <button onClick={() => setShowSummaryMobile(false)} className="w-full mt-8 py-4 bg-secondary/50 text-white font-bold text-xs uppercase tracking-widest border border-gray-800">CERRAR</button>
+              
+              <div className="flex flex-col gap-3 mt-8">
+                <button onClick={addAllToCart} disabled={Object.keys(selections).length === 0} className="w-full py-4 bg-primary text-black font-black text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(0,240,255,0.2)]">COMPRAR AHORA</button>
+                <button onClick={generatePDF} disabled={Object.keys(selections).length === 0} className="w-full py-4 bg-transparent border border-gray-700 text-gray-400 font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                  <Download size={14} /> DESCARGAR PDF
+                </button>
+                <button onClick={() => setShowSummaryMobile(false)} className="w-full py-4 bg-secondary/50 text-white font-bold text-xs uppercase tracking-widest border border-gray-800">CERRAR</button>
+              </div>
             </motion.div>
           </>
         )}

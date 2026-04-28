@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import ToastContainer from "@/components/ToastContainer";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const orbitron = Orbitron({ subsets: ["latin"], variable: '--font-orbitron' });
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${orbitron.variable} font-sans bg-black text-white antialiased`}>
         {children}
         <WhatsAppButton />
+        <ToastContainer />
       </body>
     </html>
   );

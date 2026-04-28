@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
+import ProductSkeleton from "./ProductSkeleton";
 import { Product } from "@/store/useCartStore";
 import { useSearchParams } from "next/navigation";
 
@@ -13,8 +14,15 @@ const CATEGORIES = ["Todos", "Procesadores", "Gráficas", "Periféricos", "Almac
 
 export default function ProductGrid({ products }: ProductGridProps) {
   const [activeCategory, setActiveCategory] = useState("Todos");
+  const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search')?.toLowerCase() || "";
+
+  useEffect(() => {
+    // Simular carga inicial para mostrar skeletons
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredProducts = products.filter(p => {
     const matchesCategory = activeCategory === "Todos" || p.category === activeCategory;
@@ -55,7 +63,9 @@ export default function ProductGrid({ products }: ProductGridProps) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-in fade-in duration-700">
-        {filteredProducts.length === 0 ? (
+        {isLoading ? (
+          Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
+        ) : filteredProducts.length === 0 ? (
           <div className="col-span-full py-20 text-center border border-dashed border-gray-800">
             <p className="text-gray-500 font-orbitron">No hay productos en esta categoría por ahora.</p>
           </div>

@@ -54,6 +54,30 @@ export default async function ProductPage({ params }: { params: { id: string } }
     <main className="min-h-screen bg-black text-white">
       <Navbar />
       
+      {/* Schema.org JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.name,
+            "description": product.description,
+            "image": product.image,
+            "brand": {
+              "@type": "Brand",
+              "name": product.brand
+            },
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "USD",
+              "price": product.price,
+              "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+            }
+          })
+        }}
+      />
+      
       <div className="max-w-7xl mx-auto pt-32 pb-20 px-4 md:px-8">
         <Link 
           href="/#catalogo" 

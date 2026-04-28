@@ -1,7 +1,9 @@
 import { ArrowRight, Cpu, Shield, Zap } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
 import ProductGrid from "@/components/ProductGrid";
 import BrandCarousel from "@/components/BrandCarousel";
+import Footer from "@/components/Footer";
 import { Product } from "@/store/useCartStore";
 import { createClient } from "@/utils/supabase/server";
 import { Suspense } from "react";
@@ -79,16 +81,11 @@ export default async function Home() {
 
       <BrandCarousel />
 
-      {/* Products Section */}
-      <ProductGrid products={products} />
+      <Suspense fallback={<div className="py-20 text-center font-orbitron animate-pulse">CARGANDO CATÁLOGO...</div>}>
+        <ProductGrid products={products || []} />
+      </Suspense>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-800 py-12 px-8 mt-auto bg-black">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="font-orbitron text-2xl font-bold text-primary">TECH_PC</div>
-          <p className="text-gray-500 text-sm">© 2026 Tech PC Store. Todos los derechos reservados.</p>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

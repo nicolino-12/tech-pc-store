@@ -79,3 +79,19 @@ export async function updateOrderStatus(orderId: string, status: string) {
 
   revalidatePath('/admin/orders')
 }
+
+export async function deleteProduct(productId: string) {
+  const supabase = createClient()
+  
+  const { error } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', productId)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/')
+  revalidatePath('/admin')
+}
