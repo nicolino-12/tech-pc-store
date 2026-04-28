@@ -17,13 +17,13 @@ export default function Hero() {
         </div>
 
         <h1 className="font-orbitron text-5xl md:text-8xl font-black text-white mb-6 tracking-tighter leading-[0.9] italic">
-          FORJA TU <br /> 
-          <span className="text-gradient uppercase">DESTINO GAMER</span>
+          TU TIENDA DE <br /> 
+          <span className="text-gradient uppercase">TECNOLOGÍA</span>
         </h1>
 
-        <p className="max-w-2xl mx-auto text-gray-400 text-sm md:text-base font-bold uppercase tracking-[0.15em] mb-10 leading-relaxed">
-          Diseñamos las máquinas más potentes del planeta. <br className="hidden md:block" />
-          Hardware de élite, rendimiento legendario y tecnología que redefine el futuro.
+        <p className="max-w-2xl mx-auto text-gray-400 text-sm md:text-base font-bold uppercase tracking-widest mb-10 leading-relaxed">
+          Todo el hardware que buscás en un solo lugar. <br className="hidden md:block" />
+          Especialistas en componentes de PC y equipos de alto rendimiento con envíos a todo el país.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
