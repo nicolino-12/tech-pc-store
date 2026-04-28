@@ -15,6 +15,7 @@ const CATEGORIES = ["Todos", "Procesadores", "Gráficas", "Memorias", "Almacenam
 export default function ProductGrid({ products }: ProductGridProps) {
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [isLoading, setIsLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search')?.toLowerCase() || "";
 
@@ -32,6 +33,8 @@ export default function ProductGrid({ products }: ProductGridProps) {
     
     return matchesCategory && matchesSearch;
   });
+
+  const displayProducts = showAll ? filteredProducts : filteredProducts.slice(0, 8);
 
   return (
     <section id="catalogo" className="py-24 px-8 max-w-7xl mx-auto w-full scroll-mt-20">
@@ -70,11 +73,22 @@ export default function ProductGrid({ products }: ProductGridProps) {
             <p className="text-gray-500 font-orbitron">No hay productos en esta categoría por ahora.</p>
           </div>
         ) : (
-          filteredProducts.map((product) => (
+          displayProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))
         )}
       </div>
+
+      {!showAll && filteredProducts.length > 8 && (
+        <div className="mt-16 flex justify-center">
+          <button 
+            onClick={() => setShowAll(true)}
+            className="px-12 py-4 border border-gray-800 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+          >
+            Ver Todo el Catálogo
+          </button>
+        </div>
+      )}
     </section>
   );
 }
