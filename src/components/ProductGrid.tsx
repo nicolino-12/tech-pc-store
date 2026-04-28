@@ -10,7 +10,7 @@ interface ProductGridProps {
   products: (Product & { category?: string })[];
 }
 
-const CATEGORIES = ["Todos", "Procesadores", "Gráficas", "Periféricos", "Almacenamiento", "Memorias", "Monitores"];
+const CATEGORIES = ["Todos", "Procesadores", "Gráficas", "Memorias", "Almacenamiento", "Gabinetes", "Conectividad", "Fuentes", "Periféricos", "Monitores"];
 
 export default function ProductGrid({ products }: ProductGridProps) {
   const [activeCategory, setActiveCategory] = useState("Todos");

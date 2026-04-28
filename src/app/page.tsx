@@ -1,6 +1,7 @@
 import { ArrowRight, Cpu, Shield, Zap } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import BannerCarousel from "@/components/BannerCarousel";
 import ProductGrid from "@/components/ProductGrid";
 import BrandCarousel from "@/components/BrandCarousel";
 import Footer from "@/components/Footer";
@@ -27,6 +28,10 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col">
       <Navbar />
+      <Hero />
+      <div className="py-12">
+        <BannerCarousel />
+      </div>
       <Suspense fallback={null}>
         <CheckoutStatus />
       </Suspense>
