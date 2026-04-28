@@ -106,7 +106,7 @@ export default function Navbar() {
         {user ? (
           <div className="flex items-center gap-4">
             {profile?.role === 'admin' && (
-              <Link href="/admin" className="text-[10px] text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors hidden sm:block font-bold tracking-widest">
+              <Link href="/admin" className="text-[10px] text-primary border border-primary/30 px-3 py-1 hover:bg-primary/10 transition-colors font-bold tracking-widest bg-primary/5">
                 PANEL ADMIN
               </Link>
             )}
@@ -115,7 +115,8 @@ export default function Navbar() {
             </Link>
             <div className="flex flex-col items-end hidden sm:flex">
               <span className="text-xs font-bold text-white uppercase">{profile?.full_name || user.email}</span>
-              <span className="text-[10px] text-gray-500 uppercase">{profile?.role === 'admin' ? 'Administrador' : 'Cliente Elite'}</span>
+              <span className="text-[10px] text-primary font-black">ROL DETECTADO: {profile?.role || 'null'}</span>
+              <span className="text-[8px] text-gray-500 uppercase">{user.id}</span>
             </div>
             <button 
               onClick={handleLogout}
