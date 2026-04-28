@@ -153,19 +153,23 @@ export default function ArmaTuPC() {
       <div className="max-w-7xl mx-auto pt-20 md:pt-28 pb-10 px-4 md:px-8">
         
         {/* Header Adaptado */}
-        <div className="bg-secondary/10 border-l-4 border-primary p-4 md:p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-center md:text-left w-full">
-            <h1 className="text-xl md:text-3xl font-orbitron font-black tracking-tighter italic">ARMADOR DE PC</h1>
-            <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest mt-1">Configuración técnica guiada</p>
-          </div>
-          <div className="hidden md:flex gap-8 text-center">
-            <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase">Consumo</p>
-              <p className="font-orbitron font-black text-xl text-yellow-500">{totalWatts}W</p>
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-6xl font-orbitron font-black tracking-tighter italic uppercase">
+            Armá tu <span className="text-primary">PC</span>
+          </h1>
+          <p className="text-gray-400 text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] mt-3 max-w-2xl mx-auto leading-relaxed">
+            Configurá tu nueva PC sin errores de compatibilidad, <br className="hidden md:block" />
+            seleccionando todos los componentes que deseás.
+          </p>
+
+          <div className="flex justify-center gap-8 mt-8 border-y border-gray-900 py-6">
+            <div className="text-center">
+              <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Consumo Estimado</p>
+              <p className="font-orbitron font-black text-2xl text-yellow-500">{totalWatts}W</p>
             </div>
-            <div className="w-px h-10 bg-gray-800"></div>
-            <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase italic text-primary">Precio Especial</p>
+            <div className="w-px h-12 bg-gray-900"></div>
+            <div className="text-center">
+              <p className="text-[10px] text-primary font-black uppercase italic tracking-widest mb-1">Precio Especial</p>
               <p className="font-orbitron font-black text-2xl text-primary">${totalSpecial.toLocaleString()}</p>
             </div>
           </div>

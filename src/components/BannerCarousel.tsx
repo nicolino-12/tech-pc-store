@@ -7,27 +7,27 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const BANNERS = [
   {
     id: 1,
-    title: "SEMIFINALES DE OFERTAS",
-    subtitle: "HASTA 40% OFF EN PLACAS DE VIDEO",
+    title: "OPERATIVO: OVERCLOCK",
+    subtitle: "DOMINA LA ARENA CON HASTA 40% OFF EN GPUs",
     image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=2070&auto=format&fit=crop",
     color: "from-primary/20",
-    cta: "VER OFERTAS"
+    cta: "EQUÍPATE YA"
   },
   {
     id: 2,
-    title: "GEFORCE RTX 40 SERIES",
-    subtitle: "MÁS QUE RÁPIDAS PARA JUGADORES Y CREADORES",
+    title: "PODER SIN PRECEDENTES",
+    subtitle: "NVIDIA RTX 4090: EL REY DEL RENDIMIENTO",
     image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=2070&auto=format&fit=crop",
     color: "from-green-500/20",
-    cta: "COMPRAR AHORA"
+    cta: "RECLAMA TU PODER"
   },
   {
     id: 3,
-    title: "LO NUEVO DE INTEL",
-    subtitle: "14va GENERACIÓN YA DISPONIBLE",
+    title: "INTEL CORE i9 14th GEN",
+    subtitle: "VELOCIDAD QUE DESAFÍA LA REALIDAD",
     image: "https://images.unsplash.com/photo-1555617766-c94804975da3?q=80&w=2070&auto=format&fit=crop",
     color: "from-blue-500/20",
-    cta: "DESCUBRIR"
+    cta: "VER MÁS"
   }
 ];
 

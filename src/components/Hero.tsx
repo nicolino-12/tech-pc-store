@@ -17,13 +17,13 @@ export default function Hero() {
         </div>
 
         <h1 className="font-orbitron text-5xl md:text-8xl font-black text-white mb-6 tracking-tighter leading-[0.9] italic">
-          EXPERIMENTA EL <br /> 
-          <span className="text-gradient">PODER TOTAL</span>
+          FORJA TU <br /> 
+          <span className="text-gradient uppercase">DESTINO GAMER</span>
         </h1>
 
-        <p className="max-w-2xl mx-auto text-gray-500 text-sm md:text-base font-bold uppercase tracking-widest mb-10 leading-relaxed">
-          La tienda de tecnología más avanzada para gamers y entusiastas. <br className="hidden md:block" />
-          Componentes de alto rendimiento con garantía oficial.
+        <p className="max-w-2xl mx-auto text-gray-400 text-sm md:text-base font-bold uppercase tracking-[0.15em] mb-10 leading-relaxed">
+          Diseñamos las máquinas más potentes del planeta. <br className="hidden md:block" />
+          Hardware de élite, rendimiento legendario y tecnología que redefine el futuro.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -32,7 +32,7 @@ export default function Hero() {
             className="group relative px-10 py-5 bg-primary text-black font-black text-xs uppercase tracking-widest overflow-hidden transition-all hover:bg-white shadow-[0_0_30px_rgba(0,240,255,0.3)]"
           >
             <span className="relative z-10 flex items-center gap-3">
-              Arma tu PC <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+              Armá tu PC <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
             </span>
           </Link>
           <Link 
